@@ -18,8 +18,9 @@ package org.elasticsearch.hadoop.util.unit;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
-import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
+
+import static org.hamcrest.MatcherAssert.*;
 
 
 public class ByteSizeValueTests {

@@ -15,13 +15,9 @@
  */
 package org.elasticsearch.hadoop.cascading;
 
-import java.util.Properties;
-
-import org.elasticsearch.hadoop.cfg.ConfigurationOptions;
 import org.elasticsearch.hadoop.util.TestUtils;
 import org.junit.Test;
 
-import cascading.flow.FlowDef;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.operation.Identity;
 import cascading.pipe.Each;

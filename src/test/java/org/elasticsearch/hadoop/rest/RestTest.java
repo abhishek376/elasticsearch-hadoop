@@ -16,7 +16,6 @@
 package org.elasticsearch.hadoop.rest;
 
 import org.elasticsearch.hadoop.TestSettings;
-import org.elasticsearch.hadoop.cfg.Settings;
 import org.junit.Test;
 
 /**

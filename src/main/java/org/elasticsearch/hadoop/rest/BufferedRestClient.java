@@ -18,9 +18,9 @@ package org.elasticsearch.hadoop.rest;
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.apache.commons.lang.Validate;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.elasticsearch.hadoop.cfg.Settings;
+import org.elasticsearch.hadoop.util.Assert;
 
 /**
  * Rest client performing high-level operations using buffers to improve performance. Stateful in that once created, it is used to perform updates against the same index.
@@ -64,7 +64,7 @@ public class BufferedRestClient implements Closeable {
      * @param object
      */
     public void addToIndex(Object... object) throws IOException {
-        Validate.notEmpty(index, "no index given");
+        Assert.hasText(index, "no index given");
 
         StringBuilder sb = new StringBuilder();
 

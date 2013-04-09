@@ -17,8 +17,6 @@ package org.elasticsearch.hadoop.mr;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.mapred.JobConf;
@@ -32,6 +30,7 @@ import org.elasticsearch.hadoop.cfg.ConfigurationOptions;
 import org.elasticsearch.hadoop.cfg.Settings;
 import org.elasticsearch.hadoop.cfg.SettingsManager;
 import org.elasticsearch.hadoop.rest.BufferedRestClient;
+import org.elasticsearch.hadoop.util.Assert;
 
 /**
  * ElasticSearch {@link OutputFormat} (old and new API) for adding data to an index inside ElasticSearch.
@@ -121,7 +120,6 @@ public class ESOutputFormat extends OutputFormat<Object, Object> implements org.
     @Override
     public void checkOutputSpecs(FileSystem ignored, JobConf cfg) {
         Settings settings = SettingsManager.loadFrom(cfg);
-
-        Validate.notEmpty(settings.getTargetResource(), String.format("No resource ['%s'] (index/query/location) specified", ES_RESOURCE));
+        Assert.hasText(settings.getTargetResource(), String.format("No resource ['%s'] (index/query/location) specified", ES_RESOURCE));
     }
 }
