@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.elasticsearch.hadoop.cfg.Settings;
 import org.elasticsearch.hadoop.util.Assert;
+import org.elasticsearch.hadoop.util.StringUtils;
 
 /**
  * Rest client performing high-level operations using buffers to improve performance. Stateful in that once created, it is used to perform updates against the same index.
@@ -73,7 +74,7 @@ public class BufferedRestClient implements Closeable {
             sb.append(mapper.writeValueAsString(obj));
             sb.append("\n");
 
-            byte[] data = sb.toString().getBytes("UTF-8");
+            byte[] data = sb.toString().getBytes(StringUtils.UTF_8);
 
             // make some space first
             if (data.length + bufferSize >= buffer.length) {
