@@ -17,6 +17,9 @@ package org.elasticsearch.hadoop.rest;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.elasticsearch.hadoop.cfg.Settings;
@@ -39,10 +42,16 @@ public class BufferedRestClient implements Closeable {
 
     private RestClient client;
     private String index;
+    private Resource resource;
 
     public BufferedRestClient(Settings settings) {
         this.client = new RestClient(settings);
-        this.index = settings.getTargetResource();
+        String tempIndex = settings.getTargetResource();
+        if (tempIndex == null) {
+            tempIndex = "";
+        }
+        this.index = tempIndex;
+        this.resource = new Resource(index);
 
         buffer = new byte[settings.getBatchSizeInBytes()];
         bufferEntriesThreshold = settings.getBatchSizeInEntries();
@@ -103,5 +112,14 @@ public class BufferedRestClient implements Closeable {
             flushBatch();
         }
         client.close();
+    }
+
+    public List<Shard> getTargetShards() throws IOException {
+        List<List<Map<String, Object>>> info = client.searchShards(resource.shardInfo());
+        List<Shard> shards = new ArrayList<Shard>(info.size());
+        for (List<Map<String, Object>> obj : info) {
+            shards.add(new Shard(obj.get(0)));
+        }
+        return shards;
     }
 }

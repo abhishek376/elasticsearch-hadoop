@@ -70,7 +70,7 @@ public class RestClient implements Closeable {
      * @param size what size to request
      * @return
      */
-    public List<Map<String, Object>> query(String uri, long from, int size) throws IOException {
+    List<Map<String, Object>> query(String uri, long from, int size) throws IOException {
         String q = URIUtils.addParam(uri, "from=" + from, "size=" + size);
 
         Map hits = (Map) get(q, "hits");
@@ -84,16 +84,10 @@ public class RestClient implements Closeable {
         return map.get(string);
     }
 
-    public void bulk(String index, byte[] buffer, int bufferSize) throws IOException {
+    void bulk(String index, byte[] buffer, int bufferSize) throws IOException {
         PostMethod post = new PostMethod(index + "/_bulk");
         post.setRequestEntity(new JsonByteArrayRequestEntity(buffer, bufferSize));
         post.setContentChunked(false);
-        execute(post);
-    }
-
-    private void create(String q, byte[] value) throws IOException {
-        PostMethod post = new PostMethod(q);
-        post.setRequestEntity(new ByteArrayRequestEntity(value));
         execute(post);
     }
 
@@ -133,5 +127,11 @@ public class RestClient implements Closeable {
         } finally {
             method.releaseConnection();
         }
+    }
+
+    List<List<Map<String, Object>>> searchShards(String uri) throws IOException {
+        Object result = mapper.readValue(execute(new GetMethod(uri)), Map.class).get("shards");
+        System.out.println(result);
+        return (List<List<Map<String, Object>>>) result;
     }
 }
