@@ -34,8 +34,8 @@ es.http.timeout=<timeout for http connections> # defaults to 1m
 es.operation.type=<operation type>             # options are index/delete defaults to index
 
 ```
-```
-## [Hive][]
+
+### Hive
 ES-Hadoop provides a Hive storage handler for ElasticSearch, meaning one can define an [external table][] on top of ES.
 
 Add es-hadoop-<version>.jar to `hive.aux.jars.path` or register it manually in your Hive script (recommended):
