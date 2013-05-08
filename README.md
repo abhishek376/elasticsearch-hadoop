@@ -1,14 +1,10 @@
-# ElasticSearch Hadoop
+# ElasticSearch Hive
 Read and write data to/from ElasticSearch within Hive libraries. This project is fork from https://github.com/elasticsearch/elasticsearch-hadoop. 
 
 This project includes support for
 
 1) Not only index documents but also delete documents from ES.
-
-2) Support for Nested documents
- 
-# License
-This project is released under version 2.0 of the [Apache License][]
+2) Example on how to insert nested documents from Hive to ES.
 
 # Installation
 Its very easy to build the project using gradle. [build](#building-the-source) the project yourself. 
@@ -49,10 +45,9 @@ ADD JAR /path_to_jar/es-hadoop-<version>.jar;
 To read data from ES, define a table backed by the desired index:
 ```SQL
 CREATE EXTERNAL TABLE artists (
-    id      BIGINT,
-    name    STRING,
-    links   STRUCT<url:STRING, picture:STRING>)
-STORED BY 'org.elasticsearch.hadoop.hive.ESStorageHandler'
+    id      BIGINT, 
+    name    STRING
+   STORED BY 'org.elasticsearch.hadoop.hive.ESStorageHandler'
 TBLPROPERTIES('es.resource' = 'radio/artists/_search?q=me*');
 ```
 The fields defined in the table are mapped to the JSON when communicating with ElasticSearch. Notice the use of `TBLPROPERTIES` to define the location, that is the query used for reading from this table:
@@ -65,10 +60,17 @@ To write data, a similar definition is used but with a different `es.resource`:
 ```SQL
 CREATE EXTERNAL TABLE artists (
     id      BIGINT, // _id field
-    name    STRING,
-    links   STRUCT<url:STRING, picture:STRING>)
-STORED BY 'org.elasticsearch.hadoop.hive.ESStorageHandler'
+    name    STRING
+   STORED BY 'org.elasticsearch.hadoop.hive.ESStorageHandler'
 TBLPROPERTIES('es.resource' = 'radio/artists/');
+```
+
+```SQL FOR DELETE
+CREATE EXTERNAL TABLE delete_artists (
+    id      BIGINT, // _id field
+    name    STRING
+   STORED BY 'org.elasticsearch.hadoop.hive.ESStorageHandler'
+TBLPROPERTIES('es.resource' = 'radio/artists/', 'es.operation.type' = 'delete');
 ```
 
 Any data passed to the table is then passed down to ElasticSearch; for example considering a table `s`, mapped to a TSV/CSV file, one can index it to ElasticSearch like this:
@@ -92,7 +94,9 @@ INSERT OVERWRITE TABLE delete_artists
     SELECT id FROM source s;
 ```
 
+Any data passed to the table is then passed down to ElasticSearch to delete the document.
 
+You can reach me at @abhishek376 on twitter.
 
 
 
