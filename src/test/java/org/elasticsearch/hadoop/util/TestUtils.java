@@ -15,8 +15,6 @@
  */
 package org.elasticsearch.hadoop.util;
 
-import java.io.File;
-
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.permission.FsPermission;
@@ -50,20 +48,5 @@ public class TestUtils {
 
     public static boolean isWindows() {
         return System.getProperty("os.name").toLowerCase().startsWith("win");
-    }
-
-    public static boolean delete(File file) {
-        if (file == null || !file.exists()) {
-            return false;
-        }
-
-        boolean result = true;
-        if (file.isDirectory()) {
-            String[] children = file.list();
-            for (int i = 0; i < children.length; i++) {
-                result &= delete(new File(file, children[i]));
-            }
-        }
-        return file.delete() & result;
     }
 }

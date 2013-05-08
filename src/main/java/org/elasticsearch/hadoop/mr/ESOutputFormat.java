@@ -104,9 +104,9 @@ public class ESOutputFormat extends OutputFormat<Object, Object> implements org.
             client = new BufferedRestClient(SettingsManager.loadFrom(cfg));
         }
 
-        @Override
+        @Override //Value is a writable object
         public void write(Object key, Object value) throws IOException {
-            client.addToIndex(value);
+            client.executeESBulk(value);
         }
 
         @Override

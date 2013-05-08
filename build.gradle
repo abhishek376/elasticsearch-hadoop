@@ -7,6 +7,9 @@ buildscript {
     }
 }
 
+description = 'ElasticSearch Hadoop'
+group = 'org.elasticsearch.hadoop'
+
 repositories {
   mavenCentral()
   maven { url "http://oss.sonatype.org/content/groups/public/" }
@@ -18,7 +21,6 @@ repositories {
 apply plugin: "java"
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply from: "$rootDir/maven.gradle"
 apply plugin: 'propdeps'
 apply plugin: 'propdeps-idea'
 apply plugin: 'propdeps-eclipse'
@@ -31,6 +33,7 @@ dependencies {
     compile("org.apache.hadoop:hadoop-streaming:$hadoopVersion")
 	compile("org.apache.hadoop:hadoop-tools:$hadoopVersion")
 	
+	optional("commons-io:commons-io:2.1")
 	compile("org.codehaus.jackson:jackson-mapper-asl:1.8.8")
     testRuntime("log4j:log4j:$log4jVersion")
 
@@ -106,7 +109,7 @@ task enablePigTests {
 }
 
 task enableIntegrationTests() {
-    description = "Enable integration tests"
+    description = "Enable all integration tests"
     group = "Verification"
     doLast() {
       println "Enable all integration tests"
@@ -166,7 +169,7 @@ jar {
     manifest.attributes['Implementation-Version'] = project.version
     manifest.attributes['Implementation-URL'] = "http://github.com/elasticsearch/elasticsearch-hadoop"
     manifest.attributes['Implementation-Vendor'] = "Elasticsearch"
-    manifest.attributes['Implementation-Vendor-Id'] = "org.elasticsearch.hadoop"
+    manifest.attributes['Implementation-Vendor-Id'] = "org.elasticsearch"
     
     def build = System.env['ESHDP.BUILD']
     if (build != null)

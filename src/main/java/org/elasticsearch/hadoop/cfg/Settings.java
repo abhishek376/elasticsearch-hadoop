@@ -40,9 +40,15 @@ public abstract class Settings implements InternalConfigurationOptions {
     public int getPort() {
         return (port > 0) ? port : Integer.valueOf(getProperty(ES_PORT, ES_PORT_DEFAULT));
     }
+    
+    
 
     public long getHttpTimeout() {
         return TimeValue.parseTimeValue(getProperty(ES_HTTP_TIMEOUT, ES_HTTP_TIMEOUT_DEFAULT)).getMillis();
+    }
+    
+    public String getOperationType() {
+        return getProperty(ES_OPERATION_TYPE,ES_OPERATION_TYPE_DEFAULT);
     }
 
     public int getBatchSizeInBytes() {

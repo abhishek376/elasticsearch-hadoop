@@ -31,6 +31,7 @@ import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -126,10 +127,11 @@ public class RestClient implements Closeable {
             if (status >= 300) {
                 String body;
                 try {
-                    body = method.getResponseBodyAsString();
+                    body = IOUtils.toString(method.getResponseBodyAsStream());
                 } catch (IOException ex) {
                     body = "";
                 }
+
                 throw new IOException(String.format("[%s] on [%s] failed; server returned [%s]", method.getName(), method.getURI(), body));
             }
             return method.getResponseBody();

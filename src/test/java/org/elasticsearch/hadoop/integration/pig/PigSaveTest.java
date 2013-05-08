@@ -15,8 +15,11 @@
  */
 package org.elasticsearch.hadoop.integration.pig;
 
+import java.io.ByteArrayInputStream;
+
+import org.apache.pig.ExecType;
+import org.apache.pig.PigServer;
 import org.elasticsearch.hadoop.integration.TestSettings;
-import org.elasticsearch.hadoop.pig.Pig;
 import org.elasticsearch.hadoop.rest.RestClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -26,14 +29,13 @@ import org.junit.Test;
  */
 public class PigSaveTest {
 
-    static Pig pig;
+    static PigServer pig;
 
     @BeforeClass
     public static void startup() throws Exception {
-        pig = new Pig();
-        pig.start();
-
         // initialize Pig in local mode
+        pig = new PigServer(ExecType.LOCAL, TestSettings.TESTING_PROPS);
+        pig.setBatchOn();
         RestClient client = new RestClient(new TestSettings());
         try {
             client.deleteIndex("radio");
@@ -44,37 +46,36 @@ public class PigSaveTest {
 
     @AfterClass
     public static void shutdown() {
-        pig.stop();
+        // close pig
+        if (pig != null) {
+            pig.shutdown();
+            pig = null;
+        }
     }
 
     @Test
-    public void testTuple() throws Exception {
+    public void testStorageBasic() throws Exception {
         String script =
                 // "A = LOAD 'src/test/resources/artists.dat' USING PigStorage() AS (id:long, name:chararray, links:tuple(url:chararray, picture: chararray));" +
-                "A = LOAD 'src/test/resources/artists.dat' USING PigStorage() AS (id:long, name:chararray, url:chararray, picture: chararray);" +
+                "A = LOAD 'src/test/resources/artists.dat' USING PigStorage() AS (id:long, name, url:chararray, picture: chararray);" +
                 //"ILLUSTRATE A;" +
                 "B = FOREACH A GENERATE name, TOTUPLE(url, picture) AS links;" +
                 //"ILLUSTRATE B;" +
-                "STORE B INTO 'pig/tupleartists' USING org.elasticsearch.hadoop.pig.ESStorage();";
-        //"es_total = LOAD 'radio/artists/_count?q=me*' USING org.elasticsearch.hadoop.pig.ESStorage();" +
-        //"DUMP es_total;" +
-        //"bartists = FILTER B BY name MATCHES 'me.*';" +
-        //"allb = GROUP bartists ALL;"+
-        //"total = FOREACH allb GENERATE 'total' as foo, COUNT_STAR($1) as total;"+
-        //"ILLUSTRATE allb;"+
-        //"STORE total INTO '/tmp/total';"+
-        //"DUMP total;";
-        pig.executeScript(script);
+                "STORE B INTO 'pig/artists' USING org.elasticsearch.hadoop.pig.ESStorage();";
+                //"es_total = LOAD 'radio/artists/_count?q=me*' USING org.elasticsearch.hadoop.pig.ESStorage();" +
+                //"DUMP es_total;" +
+                //"bartists = FILTER B BY name MATCHES 'me.*';" +
+                //"allb = GROUP bartists ALL;"+
+                //"total = FOREACH allb GENERATE 'total' as foo, COUNT_STAR($1) as total;"+
+                //"ILLUSTRATE allb;"+
+                //"STORE total INTO '/tmp/total';"+
+                //"DUMP total;";
+        executeScript(script);
     }
 
-    @Test
-    public void testBag() throws Exception {
-        String script =
-                //"A = LOAD 'src/test/resources/artists.dat' USING PigStorage() AS (id:long, name, links:bag{t:(url:chararray, picture: chararray)});" +
-                "A = LOAD 'src/test/resources/artists.dat' USING PigStorage() AS (id:long, name:chararray, url:chararray, picture: chararray);" +
-                "B = FOREACH A GENERATE name, TOBAG(url, picture) AS links;" +
-                "ILLUSTRATE B;" +
-                "STORE B INTO 'pig/bagartists' USING org.elasticsearch.hadoop.pig.ESStorage();";
-        pig.executeScript(script);
+    private void executeScript(String script) throws Exception {
+        pig.registerScript(new ByteArrayInputStream(script.getBytes()));
+        pig.executeBatch();
+        pig.discardBatch();
     }
 }

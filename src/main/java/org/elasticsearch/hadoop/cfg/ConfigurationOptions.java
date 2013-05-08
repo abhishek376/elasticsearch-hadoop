@@ -30,6 +30,10 @@ public interface ConfigurationOptions {
 
     /** ElasticSearch index or query (so called location) */
     static final String ES_RESOURCE = "es.resource";
+    
+    /** ElasticSearch insert or delete */
+    static final String ES_OPERATION_TYPE = "es.operation.type";
+    static final String ES_OPERATION_TYPE_DEFAULT = "index";
 
     /** ElasticSearch batch size given in bytes */
     static final String ES_BATCH_SIZE_BYTES = "es.batch.size.bytes";
