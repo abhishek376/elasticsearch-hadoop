@@ -3,12 +3,13 @@ Read and write data to/from ElasticSearch within Hive libraries. This project is
 
 This project includes support for
 
-1) Not only index documents but also delete documents from ES.
+1) Not only index documents but also delete documents from ES.  
+
 2) Example on how to insert nested documents from Hive to ES.
 
 # Installation
 Its very easy to build the project using gradle. [build](#building-the-source) the project yourself. 
-ElasticSearch Hadoop uses [Gradle][] for its build system and it is not required to have it installed on your machine.
+ElasticSearch Hadoop uses Gradle for its build system and it is not required to have it installed on your machine.
 To create a distributable jar, run `gradlew -x test build` from the command line; once completed you will find the jar in `build\libs`.
 
 # Usage
@@ -64,8 +65,8 @@ CREATE EXTERNAL TABLE artists (
    STORED BY 'org.elasticsearch.hadoop.hive.ESStorageHandler'
 TBLPROPERTIES('es.resource' = 'radio/artists/');
 ```
-
-```SQL FOR DELETE
+FOR DELETE
+```SQL 
 CREATE EXTERNAL TABLE delete_artists (
     id      BIGINT, // _id field
     name    STRING
@@ -74,13 +75,13 @@ TBLPROPERTIES('es.resource' = 'radio/artists/', 'es.operation.type' = 'delete');
 ```
 
 Any data passed to the table is then passed down to ElasticSearch; for example considering a table `s`, mapped to a TSV/CSV file, one can index it to ElasticSearch like this:
+
 ```SQL
 INSERT OVERWRITE TABLE artists 
-    SELECT NULL, s.name, named_struct('url', s.url, 'picture', s.picture) FROM source s;
+    SELECT id, s.name FROM source s;
 ```
 
 As one can note, currently the reading and writing are treated separately.
-
 
 ### How delete works
 
@@ -89,7 +90,7 @@ column while deleting.
 
 Create an external table with operation type as delete and
 
-```
+```SQL
 INSERT OVERWRITE TABLE delete_artists 
     SELECT id FROM source s;
 ```
