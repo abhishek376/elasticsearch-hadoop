@@ -2,7 +2,9 @@
 Read and write data to/from ElasticSearch within Hive libraries. This project is fork from https://github.com/elasticsearch/elasticsearch-hadoop. 
 
 This project includes support for
+
 1) Not only index documents but also delete documents from ES.
+
 2) Support for Nested documents
  
 # License
