@@ -34,6 +34,10 @@ public interface ConfigurationOptions {
     /** ElasticSearch insert or delete */
     static final String ES_OPERATION_TYPE = "es.operation.type";
     static final String ES_OPERATION_TYPE_DEFAULT = "index";
+    
+    /** ElasticSearch _id field */
+    static final String ES_ID_FIELD = "es.id.field";
+    static final String ES_ID_FIELD_DEFAULT = "_id";
 
     /** ElasticSearch batch size given in bytes */
     static final String ES_BATCH_SIZE_BYTES = "es.batch.size.bytes";

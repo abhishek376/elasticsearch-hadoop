@@ -50,6 +50,10 @@ public abstract class Settings implements InternalConfigurationOptions {
     public String getOperationType() {
         return getProperty(ES_OPERATION_TYPE,ES_OPERATION_TYPE_DEFAULT);
     }
+    
+    public String getIDField() {
+        return getProperty(ES_ID_FIELD,ES_ID_FIELD_DEFAULT);
+    }
 
     public int getBatchSizeInBytes() {
         return ByteSizeValue.parseBytesSizeValue(getProperty(ES_BATCH_SIZE_BYTES, ES_BATCH_SIZE_BYTES_DEFAULT)).bytesAsInt();

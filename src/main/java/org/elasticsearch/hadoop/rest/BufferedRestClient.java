@@ -105,7 +105,7 @@ public class BufferedRestClient implements Closeable {
         LOG.info("Writable" + d.toString());
         
         StringBuilder sb = new StringBuilder();
-                
+        //Writting rid as ID 
         sb.append("{\"index\":{\"_id\":\""+ rid.toString() + "\"}}\n");
         sb.append(getESQuery(d));
         sb.append("\n");
