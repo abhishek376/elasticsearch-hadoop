@@ -100,11 +100,7 @@ public class BufferedRestClient implements Closeable {
 	    LOG.info("addToIndex");
         Validate.notEmpty(index, "no index given");
         
-        if(this.idField != "_id")
-        {
-          Object d = (object instanceof Writable ? WritableUtils.fromWritable((Writable) object) : object);
-          Object rid   = ((LinkedHashMap)d).get("rid");
-        }
+        Object d = (object instanceof Writable ? WritableUtils.fromWritable((Writable) object) : object);
         
         LOG.info("Writable" + d.toString());
         
@@ -116,7 +112,8 @@ public class BufferedRestClient implements Closeable {
         }
         else
         {
-            sb.append("{\"index\":{\"_id\":\""+ rid.toString() + "\"}}\n");
+            Object _id   = ((LinkedHashMap)d).get(this.idField);
+            sb.append("{\"index\":{\"_id\":\""+ _id.toString() + "\"}}\n");
         }
         sb.append(getESQuery(d));
         sb.append("\n");
