@@ -52,6 +52,7 @@ public class BufferedRestClient implements Closeable {
     private ObjectMapper mapper = new ObjectMapper();
 
     private String operationType;
+    private String idField;
     private RestClient client;
     private String index;
 
@@ -59,6 +60,7 @@ public class BufferedRestClient implements Closeable {
         this.client = new RestClient(settings);
         this.index = settings.getTargetResource();
         this.operationType = settings.getOperationType();
+        this.idField = settings.getIDField();
         buffer = new byte[settings.getBatchSizeInBytes()];
         bufferEntriesThreshold = settings.getBatchSizeInEntries();
         requiresRefreshAfterBulk = settings.getBatchRefreshAfterWrite();
@@ -97,16 +99,25 @@ public class BufferedRestClient implements Closeable {
     public void addToIndex(Object object) throws IOException {
 	    LOG.info("addToIndex");
         Validate.notEmpty(index, "no index given");
-
-        Object d = (object instanceof Writable ? WritableUtils.fromWritable((Writable) object) : object);
         
-        Object rid   = ((LinkedHashMap)d).get("rid");
-                
+        if(this.idField != "_id")
+        {
+          Object d = (object instanceof Writable ? WritableUtils.fromWritable((Writable) object) : object);
+          Object rid   = ((LinkedHashMap)d).get("rid");
+        }
+        
         LOG.info("Writable" + d.toString());
         
         StringBuilder sb = new StringBuilder();
-        //Writting rid as ID 
-        sb.append("{\"index\":{\"_id\":\""+ rid.toString() + "\"}}\n");
+        //Writting rid as ID
+        if(this.idField == "_id")
+        {
+            sb.append("{\"index\":{}}\n");
+        }
+        else
+        {
+            sb.append("{\"index\":{\"_id\":\""+ rid.toString() + "\"}}\n");
+        }
         sb.append(getESQuery(d));
         sb.append("\n");
         
@@ -165,6 +176,11 @@ public class BufferedRestClient implements Closeable {
         LOG.info("deleteFromIndex");
 
         Object d = (object instanceof Writable ? WritableUtils.fromWritable((Writable) object) : object);
+        
+        if(this.idField == "_id")
+        {
+            throw new IOException("Id field is not specified");
+        }
 
         StringBuilder sb = new StringBuilder();
         
