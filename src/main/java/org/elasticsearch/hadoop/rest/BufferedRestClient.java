@@ -115,7 +115,9 @@ public class BufferedRestClient implements Closeable {
             Object _id   = ((LinkedHashMap)d).get(this.idField);
             sb.append("{\"index\":{\"_id\":\""+ _id.toString() + "\"}}\n");
         }
-        sb.append(getESQuery(d));
+        sb.append(mapper.writeValueAsString(d));
+        // If you have nested objects uncomment the below line 
+        //sb.append(getESQuery(d));
         sb.append("\n");
         
         LOG.info("ES index query" + sb.toString());
@@ -135,7 +137,8 @@ public class BufferedRestClient implements Closeable {
             flushBatch();
         }
     }
-
+    
+    //For Elasticsearch Nested Objects
 	private String getESQuery(Object d) throws IOException,
 			JsonGenerationException, JsonMappingException {
 		String rdata = ((LinkedHashMap)d).get("rdata").toString();
